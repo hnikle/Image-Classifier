@@ -55,26 +55,27 @@ def predict(image_path, model, topk):
         probs, classes = probs[0].tolist(), classes[0].tolist()
         
         return_classes = []
-        for cls in classes:
-            return_classes.append(img_classes_dict[cls])
+        for c in classes:
+            return_classes.append(img_classes_dict[c])
             
         return probs, return_classes
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--image_path', type=str)
-parser.add_argument('--checkpoint',type=str, required=True)
 parser.add_argument('--topk', type=int, default=3)
 parser.add_argument('--gpu', dest="gpu", action="store", default="gpu")    
+parser.add_argument('--json', type=str)
 args = parser.parse_args()
 
-with open('cat_to_name.json', 'r') as f:
+with open(args.json, 'r') as f:
     cat_to_name = json.load(f)
 
 device = check_gpu(gpu_arg=args.gpu)
-model, class_to_idx = load_checkpoint(args.checkpoint)
+model, class_to_idx = load_checkpoint('checkpoint.pth')
+
 
 probs, classes = predict(args.image_path, model, args.topk)
-labels = [cat_to_name[cls] for cls in classes]
+labels = [cat_to_name[c1] for c1 in classes]
 
 print ('Classes: ', labels)
 print('Probability: ', probs)

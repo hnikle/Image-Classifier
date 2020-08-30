@@ -34,8 +34,9 @@ def check_gpu(gpu_arg):
     return device
 
 def primary_model(architecture="vgg16"):
-    model = models.vgg16(pretrained=True)
-    model.name = "vgg16"
+    
+    model = eval("models.{}(pretrained=True)".format(architecture))
+    model.name = arch
         
     for param in model.parameters():
         param.requires_grad = False 
